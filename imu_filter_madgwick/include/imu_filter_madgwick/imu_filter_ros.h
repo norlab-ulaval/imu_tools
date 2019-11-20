@@ -42,11 +42,13 @@ class ImuFilterRos
 {
   typedef sensor_msgs::Imu              ImuMsg;
   typedef sensor_msgs::MagneticField    MagMsg;
+  typedef geometry_msgs::Vector3Stamped BiasMsg;
 
   typedef message_filters::sync_policies::ApproximateTime<ImuMsg, MagMsg> SyncPolicy;
   typedef message_filters::Synchronizer<SyncPolicy> Synchronizer;
   typedef message_filters::Subscriber<ImuMsg> ImuSubscriber;
   typedef message_filters::Subscriber<MagMsg> MagSubscriber;
+  typedef ros::Subscriber BiasSubscriber;
 
   typedef imu_filter_madgwick::ImuFilterMadgwickConfig   FilterConfig;
   typedef dynamic_reconfigure::Server<FilterConfig>   FilterConfigServer;
@@ -66,6 +68,7 @@ class ImuFilterRos
     boost::shared_ptr<ImuSubscriber> imu_subscriber_;
     boost::shared_ptr<MagSubscriber> mag_subscriber_;
     boost::shared_ptr<Synchronizer> sync_;
+    BiasSubscriber bias_subscriber_;
 
     ros::Publisher rpy_filtered_debug_publisher_;
     ros::Publisher rpy_raw_debug_publisher_;
@@ -101,6 +104,8 @@ class ImuFilterRos
                         const MagMsg::ConstPtr& mav_msg);
 
     void imuCallback(const ImuMsg::ConstPtr& imu_msg_raw);
+
+    void biasCallback(const BiasMsg::ConstPtr& bias_msg);
 
     void publishFilteredMsg(const ImuMsg::ConstPtr& imu_msg_raw);
     void publishTransform(const ImuMsg::ConstPtr& imu_msg_raw);

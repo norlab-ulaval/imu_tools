@@ -91,6 +91,14 @@ public:
         w_bz_ = 0;
     }
 
+    void setGyroBias(double w_bx_, double w_by_, double w_bz_)
+    {
+
+        this->w_bx_ = w_bx_;
+        this->w_by_ = w_by_;
+        this->w_bz_ = w_bz_;
+    }
+
     void madgwickAHRSupdate(float gx, float gy, float gz,
                             float ax, float ay, float az,
                             float mx, float my, float mz,

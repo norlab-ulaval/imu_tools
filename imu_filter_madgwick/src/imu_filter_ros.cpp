@@ -25,6 +25,8 @@
 #include "imu_filter_madgwick/imu_filter_ros.h"
 #include "imu_filter_madgwick/stateless_orientation.h"
 #include "geometry_msgs/TransformStamped.h"
+#include "geometry_msgs/Vector3Stamped.h"
+
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 
@@ -106,6 +108,9 @@ ImuFilterRos::ImuFilterRos(ros::NodeHandle nh, ros::NodeHandle nh_private):
 
   imu_subscriber_.reset(new ImuSubscriber(
     nh_, ros::names::resolve("imu") + "/data_raw", queue_size));
+
+  bias_subscriber_ = nh_.subscribe("madgwick_filter/bias",queue_size, &ImuFilterRos::biasCallback, this);
+
 
   if (use_mag_)
   {
@@ -374,4 +379,10 @@ void ImuFilterRos::checkTopicsTimerCallback(const ros::TimerEvent&)
                     << " and " << ros::names::resolve("imu") << "/mag" << "...");
   else
     ROS_WARN_STREAM("Still waiting for data on topic " << ros::names::resolve("imu") << "/data_raw" << "...");
+}
+
+void ImuFilterRos::biasCallback(const BiasMsg::ConstPtr& bias_msg)
+{
+  boost::mutex::scoped_lock lock(mutex_);
+  filter_.setGyroBias(bias_msg->vector.x,bias_msg->vector.y, bias_msg->vector.z);
 }

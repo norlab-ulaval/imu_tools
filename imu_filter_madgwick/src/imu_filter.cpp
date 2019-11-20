@@ -100,6 +100,15 @@ static inline void compensateGyroDrift(
   gz -= w_bz;
 }
 
+static inline void substractGyroDrift(
+        float& w_bx, float& w_by, float& w_bz,
+        float& gx, float& gy, float& gz)
+{
+  gx -= w_bx;
+  gy -= w_by;
+  gz -= w_bz;
+}
+
 static inline void orientationChangeFromGyro(
     float q0, float q1, float q2, float q3,
     float gx, float gy, float gz,
@@ -263,6 +272,9 @@ void ImuFilter::madgwickAHRSupdateIMU(
   float recipNorm;
   float s0, s1, s2, s3;
   float qDot1, qDot2, qDot3, qDot4;
+
+  // Only substract gyro bias, do not update the bias
+  substractGyroDrift(w_bx_, w_by_, w_bz_, gx, gy, gz);
 
   // Rate of change of quaternion from gyroscope
   orientationChangeFromGyro (q0, q1, q2, q3, gx, gy, gz, qDot1, qDot2, qDot3, qDot4);
