@@ -99,6 +99,13 @@ public:
         this->w_bz_ = w_bz_;
     }
 
+    void getGyroBias(double& w_bx_, double& w_by_, double& w_bz_)
+    {
+        w_bx_ = double(this->w_bx_);
+        w_by_ = double(this->w_by_);
+        w_bz_ = double(this->w_bz_);
+    }
+
     void madgwickAHRSupdate(float gx, float gy, float gz,
                             float ax, float ay, float az,
                             float mx, float my, float mz,

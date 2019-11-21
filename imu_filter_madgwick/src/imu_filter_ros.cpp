@@ -309,7 +309,9 @@ void ImuFilterRos::publishTransform(const ImuMsg::ConstPtr& imu_msg_raw)
 void ImuFilterRos::publishFilteredMsg(const ImuMsg::ConstPtr& imu_msg_raw)
 {
   double q0,q1,q2,q3;
+  double w_bx_, w_by_, w_bz_;
   filter_.getOrientation(q0,q1,q2,q3);
+  filter_.getGyroBias(w_bx_, w_by_, w_bz_);
 
   // create and publish filtered IMU message
   boost::shared_ptr<ImuMsg> imu_msg =
@@ -319,6 +321,10 @@ void ImuFilterRos::publishFilteredMsg(const ImuMsg::ConstPtr& imu_msg_raw)
   imu_msg->orientation.x = q1;
   imu_msg->orientation.y = q2;
   imu_msg->orientation.z = q3;
+
+  imu_msg->angular_velocity.x -= w_bx_;
+  imu_msg->angular_velocity.y -= w_by_;
+  imu_msg->angular_velocity.z -= w_bz_;
 
   imu_msg->orientation_covariance[0] = orientation_variance_;
   imu_msg->orientation_covariance[1] = 0.0;
