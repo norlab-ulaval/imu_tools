@@ -109,6 +109,15 @@ static inline void substractGyroDrift(
   gz -= w_bz;
 }
 
+static inline void multiplyGyroScale(
+        const float& sx, const float& sy, const float& sz,
+	float& gx, float& gy, float& gz)
+{
+  gx *= sx;
+  gy *= sy;
+  gz *= sz;
+}
+
 static inline void orientationChangeFromGyro(
     float q0, float q1, float q2, float q3,
     float gx, float gy, float gz,
@@ -173,6 +182,7 @@ static inline void compensateMagneticDistortion(
 ImuFilter::ImuFilter() :
     q0(1.0), q1(0.0), q2(0.0), q3(0.0),
     w_bx_(0.0), w_by_(0.0), w_bz_(0.0),
+    gyroScaleX(1.0), gyroScaleY(1.0), gyroScaleZ(1.0),
     zeta_ (0.0), gain_ (0.0), world_frame_(WorldFrame::ENU)
 {
 }
@@ -275,6 +285,8 @@ void ImuFilter::madgwickAHRSupdateIMU(
 
   // Only substract gyro bias, do not update the bias
   substractGyroDrift(w_bx_, w_by_, w_bz_, gx, gy, gz);
+
+  multiplyGyroScale(gyroScaleX, gyroScaleY, gyroScaleZ, gx, gy, gz);
 
   // Rate of change of quaternion from gyroscope
   orientationChangeFromGyro (q0, q1, q2, q3, gx, gy, gz, qDot1, qDot2, qDot3, qDot4);

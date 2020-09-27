@@ -70,6 +70,14 @@ ImuFilterRos::ImuFilterRos(ros::NodeHandle nh, ros::NodeHandle nh_private):
   }
   filter_.setWorldFrame(world_frame_);
 
+  if(!nh_private_.getParam("gyro_scale_x", gyroScaleX))
+    gyroScaleX = 1.0;
+  if(!nh_private_.getParam("gyro_scale_y", gyroScaleY))
+    gyroScaleY = 1.0;
+  if(!nh_private_.getParam("gyro_scale_z", gyroScaleZ))
+    gyroScaleZ = 1.0;
+  filter_.setGyroScale(gyroScaleX, gyroScaleY, gyroScaleZ);
+
   // check for illegal constant_dt values
   if (constant_dt_ < 0.0)
   {
@@ -310,8 +318,10 @@ void ImuFilterRos::publishFilteredMsg(const ImuMsg::ConstPtr& imu_msg_raw)
 {
   double q0,q1,q2,q3;
   double w_bx_, w_by_, w_bz_;
+  double gyroScaleX, gyroScaleY, gyroScaleZ;
   filter_.getOrientation(q0,q1,q2,q3);
   filter_.getGyroBias(w_bx_, w_by_, w_bz_);
+  filter_.getGyroScale(gyroScaleX, gyroScaleY, gyroScaleZ);
 
   // create and publish filtered IMU message
   boost::shared_ptr<ImuMsg> imu_msg =
@@ -325,6 +335,10 @@ void ImuFilterRos::publishFilteredMsg(const ImuMsg::ConstPtr& imu_msg_raw)
   imu_msg->angular_velocity.x -= w_bx_;
   imu_msg->angular_velocity.y -= w_by_;
   imu_msg->angular_velocity.z -= w_bz_;
+
+  imu_msg->angular_velocity.x *= gyroScaleX;
+  imu_msg->angular_velocity.y *= gyroScaleY;
+  imu_msg->angular_velocity.z *= gyroScaleZ;
 
   imu_msg->orientation_covariance[0] = orientation_variance_;
   imu_msg->orientation_covariance[1] = 0.0;

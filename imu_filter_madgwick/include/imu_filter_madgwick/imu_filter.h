@@ -45,6 +45,7 @@ class ImuFilter
     // **** state variables
     double q0, q1, q2, q3;  // quaternion
     float w_bx_, w_by_, w_bz_; // 
+    float gyroScaleX, gyroScaleY, gyroScaleZ;
 
 public:
     void setAlgorithmGain(double gain)
@@ -104,6 +105,20 @@ public:
         w_bx_ = double(this->w_bx_);
         w_by_ = double(this->w_by_);
         w_bz_ = double(this->w_bz_);
+    }
+
+    void setGyroScale(const double& gyroScaleX, const double& gyroScaleY, const double& gyroScaleZ)
+    {
+        this->gyroScaleX = gyroScaleX;
+        this->gyroScaleY = gyroScaleY;
+        this->gyroScaleZ = gyroScaleZ;
+    }
+
+    void getGyroScale(double& gyroScaleX, double& gyroScaleY, double& gyroScaleZ)
+    {
+        gyroScaleX = double(this->gyroScaleX);
+        gyroScaleY = double(this->gyroScaleY);
+        gyroScaleZ = double(this->gyroScaleZ);
     }
 
     void madgwickAHRSupdate(float gx, float gy, float gz,

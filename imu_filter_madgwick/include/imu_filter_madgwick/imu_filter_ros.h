@@ -90,6 +90,9 @@ class ImuFilterRos
     bool publish_debug_topics_;
     geometry_msgs::Vector3 mag_bias_;
     double orientation_variance_;
+    double gyroScaleX;
+    double gyroScaleY;
+    double gyroScaleZ;
 
     // **** state variables
     boost::mutex mutex_;
