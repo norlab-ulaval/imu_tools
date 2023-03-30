@@ -10,6 +10,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(CMAKE_BUILD_TYPE "Release")
+
 find_package(ament_cmake REQUIRED COMPONENTS rviz)
 find_package(message_filters REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets Test)
